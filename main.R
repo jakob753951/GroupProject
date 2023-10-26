@@ -1,9 +1,8 @@
-install.packages("tidyverse")
-install.packages("gganimate")
-install.packages("gifski")
-install.packages("transformr")
+renv::install()
 library(dplyr)
 data <- read.csv("Life_Expectancy_Data.csv", header = TRUE)
 
-data |> select(Country)
-
+data |>
+  group_by(Country) |>
+  slice_min(Year) |>
+  summarize(avg = mean(Life.expectancy))
