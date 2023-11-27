@@ -25,14 +25,14 @@ data <- data %>% filter(Year != 2015)
 # Create ggplot
 p_animate <- ggplot(
   data,
-  aes(x = GDP, y = Life.expectancy, size = Population, colour = Continent, label = Country)
+  aes(x = Hepatitis.B, y = Alcohol, size = Life.expectancy, colour = Continent, label = Country)
 ) +
   geom_point(show.legend = TRUE, alpha = 0.4) +  
   scale_color_manual(values = c("Asia" = "red", "Europe" = "blue", "Africa" = "green", "Americas" = "yellow", "Oceania" = "black"),
                      name = "Continent") +  
   scale_size_continuous(range = c(2, 10), name = "Population") +  
   scale_x_log10() +  
-  labs(x = "GDP per Capita", y = "Life Expectancy")+  
+  labs(x = "Alcohol consumption", y = "Hepatitis B")+  
   transition_states(Life.expectancy) +
   enter_fade() +
   ease_aes('linear', nframes = 700) +
@@ -60,8 +60,8 @@ library(plotly)
 # Create Plotly graph
 p_animate_plotly <- plot_ly(
   data,
-  x = ~GDP, y = ~Life.expectancy,
-  size = ~Population, color = ~Continent,
+  x = ~Alcohol, y = ~Hepatitis.B,
+  size = ~Life.expectancy, color = ~Continent,
   text = ~paste("Country: ", Country, ", Population: ", Population),
   frame = ~Year,
   marker = list(sizemode = "diameter", line = list(width = 1)),  # Adjust the line width
@@ -69,8 +69,8 @@ p_animate_plotly <- plot_ly(
   mode = "markers"
 ) %>%
   layout(
-    xaxis = list(type = "log", title = "GDP per Capita"),
-    yaxis = list(title = "Life Expectancy"),
+    xaxis = list(type = "log", title = "Alcohol consumption per capita [liters of pure alcohol]"),
+    yaxis = list(title = "Hepatitis B"),
     showlegend = TRUE,
     legend = list(
       x = 1,
