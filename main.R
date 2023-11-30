@@ -186,14 +186,19 @@ country_data <- filtered_data %>%
 world_data <- map_data("world")
 merged_data <- left_join(world_data, country_data, by = c("region" = "country"))
 
-# Adjust color intervals
-color_intervals <- c(0, 10, 15, 20, 25, 30)
-color_palette <- brewer.pal(length(color_intervals) - 1, "Greens")
+# Anzahl der gewünschten Farbstufen
+num_colors <- 5
 
+
+# Erstellen von gleichmäßig verteilten Breaks
+breaks <- seq(0, 1600, length.out = num_colors + 1)
+
+# Adjust color palette accordingly (make sure to have num_colors + 1 colors)
+color_palette <- brewer.pal(length(breaks) - 1, "Greens")
 world_map <- ggplot(merged_data) +
-  geom_polygon(aes(x = long, y = lat, group = group, fill = cut(value, breaks = color_intervals)), color = "gray40") +
+  geom_polygon(aes(x = long, y = lat, group = group, fill = cut(value, breaks = breaks)), color = "gray40") +
   scale_fill_manual(values = color_palette) +
-  labs(title = "World Map for Occurrences", fill = merged_data$value) +
+  labs(title = "World Map of Infant Deaths", fill = merged_data$value) +
   theme_minimal() +
   theme(legend.position = "bottom") +
   theme(legend.position = "bottom",
