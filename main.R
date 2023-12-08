@@ -33,23 +33,21 @@ data <- read.csv("Life_Expectancy_Data.csv", header = TRUE) %>%
 data <- data %>% filter(Year != 2015)
 
 # Create ggplot
-my_anim <- ggplot(data, aes(x = factor(Status), y = Alcohol, fill = factor(Year), frame = Year)) +
-  geom_boxplot() +
-  geom_jitter(width = 0.2, height = 0, alpha = 0.5, color = "black") +
-  transition_states(Year, transition_length = 2, state_length = 1) +
+boxplot_anim <- ggplot(data, aes(x = factor(Status), y = Alcohol, fill = factor(Status), frame = Year)) +
+  geom_boxplot(outlier.colour = "red") +
+  geom_jitter(color = "black", width = 0.2, shape = 1, height = 0, alpha = 0.7) + #factor(Status)
+  transition_states(Year, transition_length = 10, state_length = 30) +
   enter_fade() +
   exit_shrink() +
-  ease_aes('sine-in-out')
+  ease_aes('sine-in-out') +
+  labs(
+    title = "Alcohol consumption in developing and developed countries",
+    x = "Country Status",    # Specify your custom x-axis label here
+    y = "Alcohol consumption per capita (liters of pure alcohol)"     # Specify your custom y-axis label here
+  ) +
+  theme(legend.position = "none") # no legend    
+
 
 # Create animation
-my_animation <- animate(my_anim, nframes = 50, fps = 1)
-
-# Convert gganimate object to Plotly object
-my_plotly_anim <- ggplotly(ggplot2::last_plot(), tooltip = c("ymin", "lower", "middle", "upper", "ymax"))
-
-# Adjust layout to remove legend
-my_plotly_anim <- my_plotly_anim %>%
-  layout(showlegend = FALSE)
-
-# Print interactive plot
-print(my_plotly_anim)
+my_animation <- animate(boxplot_anim, nframes = 15, fps = 1)
+print(my_animation)
