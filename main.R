@@ -1,151 +1,55 @@
 renv::install()
 library(dplyr)
-library(countrycode)
-library(tidyverse)
-library(gganimate)
-library(gifski)
-library(transformr)
-library(plotly)
 data <- read.csv("Life_Expectancy_Data.csv", header = TRUE)
-data$Continent <- countrycode(data$Country, "country.name", "continent")
 
 data |>
   group_by(Country) |>
   slice_min(Year) |>
   select(Life.expectancy)
 
+# Boxplot with Alcohol
 
-averages_measles <- data.frame(Country = character(), Average = numeric(), stringsAsFactors = FALSE)
-averages_under_five_deaths <- data.frame(Country = character(), Average = numeric(), stringsAsFactors = FALSE)
+################################
+################################
+
+# Load packages
+if (!require("ggplot2")) install.packages("ggplot2")
+if (!require("gganimate")) install.packages("gganimate")
+if (!require("dplyr")) install.packages("dplyr")
+if (!require("countrycode")) install.packages("countrycode")
+if (!require("plotly")) install.packages("plotly")
+
+library(ggplot2)
+library(gganimate)
+library(dplyr)
+library(countrycode)
+library(plotly)
+
+# Read the CSV file and add continent information
+data <- read.csv("Life_Expectancy_Data.csv", header = TRUE) %>%
+  mutate(Continent = countrycode(Country, "country.name", "continent"))
+
+# Exclude data from the year 2015
+data <- data %>% filter(Year != 2015)
+
+# Create ggplot
+boxplot_anim <- ggplot(data, aes(x = factor(Status), y = Alcohol, fill = factor(Status), frame = Year)) +
+  geom_boxplot(outlier.colour = "red") +
+  geom_jitter(color = "black", width = 0.2, shape = 1, height = 0, alpha = 0.7) + #factor(Status)
+  transition_states(Year, transition_length = 1, state_length = 2) +
+  enter_fade() +
+  exit_shrink() +
+  ease_aes('sine-in-out') +
+  labs(
+    title = "Alcohol consumption in developing and developed countries in the year {closest_state}",
+    x = "Country Status",    # Specify your custom x-axis label here
+    y = "Alcohol consumption per capita (liters of pure alcohol)"     # Specify your custom y-axis label here
+  ) +
+  theme(legend.position = "none") # no legend    
 
 
-# Get unique countries in the data frame
-unique_countries <- unique(data$Country)
+# Create animation
+my_animation <- animate(boxplot_anim, nframes = 900, fps = 30)
+print(my_animation)
 
-# Iterate through each country
-for (country in unique_countries) {
-  # Subset data for the current country
-  country_data <- data[data$Country == country, ]
-  
-  # Calculate the average for the current country
-  measles_average <- mean(country_data$Measles)
-  under_five_death_average <- mean(country_data$under.five.deaths)
-  #average <- rbind(measles_average, under_five_death_average)
-  
-  # Append the result to the averages data frame
-  averages_measles <- rbind(averages_measles, data.frame(Country = country, "Measles Average" = measles_average))
-  averages_under_five_deaths <- rbind(averages_under_five_deaths, data.frame(Country = country, "Under Five Deaths Average" = under_five_death_average))
-  
-}
-
-data <- left_join(data, averages_measles, by = "Country")
-data <- left_join(data, averages_under_five_deaths, by = "Country")
-
-# Scatterplot of Measles vs. Death under age of 5
-data_europe <- data %>% filter(Continent == "Europe")
-data_asia   <- data %>% filter(Continent == "Asia")
-data_africa <- data %>% filter(Continent == "Africa")
-data_americas <- data %>% filter(Continent == "Americas")
-data_oceania<- data %>% filter(Continent == "Oceania")
-
-### Fit a linear regression model
-# Europe
-data_model_europe   <- subset(data_europe, Country != "Russian Federation")
-linear_model_europe <- lm(data_model_europe$Measles.Average ~ data_model_europe$Under.Five.Deaths.Average, data = data_model_europe)
-predicted_values_europe <- predict(linear_model_europe)
-# Set values below 0 to 0 --> still some error here: truncates values but now there is a bend in the line which should be straight
-predicted_values_europe[predicted_values_europe < 0] <- 0
-rmse_europe <- sqrt(mean(resid(linear_model_europe)^2))
-
-scatter_plot_europe <- plot_ly(data_model_europe, x = ~data_model_europe$Under.Five.Deaths.Average, y = ~data_model_europe$Measles.Average, text = data_model_europe$Country, mode = "markers", type = "scatter", name = "European countries") %>%  #, showlegend = TRUE
-  layout(title = "Interactive Scatter Plot", xaxis = list(title = "Death under age of 5"), yaxis = list(title = "Measle Cases")) %>%
-  add_lines(x = ~data_model_europe$Under.Five.Deaths.Average, y = ~predicted_values_europe, line = list(color = 'red'), name = "Linear regression", hoverinfo = "text", text = rep(paste("RMSE: ", rmse_europe), length(predicted_values_europe)))
-scatter_plot_europe
-
-# Asia
-data_model_asia   <- subset(data_asia)#, Country != "Russian Federation")
-linear_model_asia <- lm(data_model_asia$Measles.Average ~ data_model_asia$Under.Five.Deaths.Average, data = data_model_asia)
-predicted_values_asia <- predict(linear_model_asia)
-# Set values below 0 to 0 --> still some error here: truncates values but now there is a bend in the line which should be straight
-predicted_values_asia[predicted_values_asia < 0] <- 0
-rmse_asia <- sqrt(mean(resid(linear_model_asia)^2))
-
-scatter_plot_asia <- plot_ly(data_model_asia, x = ~data_model_asia$Under.Five.Deaths.Average, y = ~data_model_asia$Measles.Average, text = data_model_asia$Country, mode = "markers", type = "scatter", name = "Asian countries") %>%
-  layout(title = "Interactive Scatter Plot", xaxis = list(title = "Death under age of 5"), yaxis = list(title = "Measle Cases")) %>%
-  add_lines(x = ~data_model_asia$Under.Five.Deaths.Average, y = ~predicted_values_asia, line = list(color = 'red'), name = "Linear regression", hoverinfo = "text", text = rep(paste("RMSE: ", rmse_asia), length(predicted_values_asia)))
-scatter_plot_asia
-
-# Africa
-data_model_africa   <- subset(data_africa) #, Country) # != "Russian Federation")
-linear_model_africa <- lm(data_model_africa$Measles.Average ~ data_model_africa$Under.Five.Deaths.Average, data = data_model_africa)
-predicted_values_africa <- predict(linear_model_africa)
-# Set values below 0 to 0 --> still some error here: truncates values but now there is a bend in the line which should be straight
-predicted_values_africa[predicted_values_africa < 0] <- 0
-rmse_africa <- sqrt(mean(resid(linear_model_africa)^2))
-
-scatter_plot_africa <- plot_ly(data_model_africa, x = ~data_model_africa$Under.Five.Deaths.Average, y = ~data_model_africa$Measles.Average, text = data_model_africa$Country, mode = "markers", type = "scatter", name = "African countries") %>%
-  layout(title = "Interactive Scatter Plot", xaxis = list(title = "Death under age of 5"), yaxis = list(title = "Measle Cases")) %>%
-  add_lines(x = ~data_model_africa$Under.Five.Deaths.Average, y = ~predicted_values_africa, line = list(color = 'red'), name = "Linear regression", hoverinfo = "text", text = rep(paste("RMSE: ", rmse_africa), length(predicted_values_africa)))
-scatter_plot_africa
-
-# Americas
-data_model_americas   <- subset(data_americas)
-linear_model_america <- lm(data_model_americas$Measles.Average ~ data_model_americas$Under.Five.Deaths.Average, data = data_model_americas)
-predicted_values_americas <- predict(linear_model_america)
-# Set values below 0 to 0 --> still some error here: truncates values but now there is a bend in the line which should be straight
-predicted_values_americas[predicted_values_americas < 0] <- 0
-rmse_america <- sqrt(mean(resid(linear_model_america)^2))
-
-scatter_plot_americas <- plot_ly(data_model_americas, x = ~data_model_americas$Under.Five.Deaths.Average, y = ~data_model_americas$Measles.Average, text = data_model_americas$Country, mode = "markers", type = "scatter", name = "American countries") %>%
-  layout(title = "Interactive Scatter Plot", xaxis = list(title = "Death under age of 5"), yaxis = list(title = "Measle Cases")) %>%
-  add_lines(x = ~data_model_americas$Under.Five.Deaths.Average, y = ~predicted_values_americas, line = list(color = 'red'), name = "Linear regression", hoverinfo = "text", text = rep(paste("RMSE: ", rmse_america), length(predicted_values_americas)))
-scatter_plot_americas
-
-# Oceania
-data_model_oceania   <- subset(data_oceania)
-linear_model_oceania <- lm(data_model_oceania$Measles.Average ~ data_model_oceania$Under.Five.Deaths.Average, data = data_model_oceania)
-predicted_values_oceania <- predict(linear_model_oceania)
-# Set values below 0 to 0 --> still some error here: truncates values but now there is a bend in the line which should be straight
-predicted_values_oceania[predicted_values_oceania < 0] <- 0
-rmse_oceania <- sqrt(mean(resid(linear_model_oceania)^2))
-
-scatter_plot_oceania <- plot_ly(data_model_oceania, x = ~data_model_oceania$Under.Five.Deaths.Average, y = ~data_model_oceania$Measles.Average, text = data_model_oceania$Country, mode = "markers", type = "scatter", name = "Oceanian countries") %>%
-  layout(title = "Interactive Scatter Plot", xaxis = list(title = "Death under age of 5"), yaxis = list(title = "Measle Cases")) %>%
-  add_lines(x = ~data_model_oceania$Under.Five.Deaths.Average, y = ~predicted_values_oceania, line = list(color = 'red'), name = "Linear regression", hoverinfo = "text", text = rep(paste("RMSE: ", rmse_oceania), length(predicted_values_oceania)))
-scatter_plot_oceania
-
-## Subplots
-combined_plot <- subplot(scatter_plot_europe, scatter_plot_asia, scatter_plot_africa, scatter_plot_americas, scatter_plot_oceania)
-combined_plot
-
-## Checking the grade of the linear regression
-# Europe
-# Residual Analysis: should be close to zero and evenly distributed
-plot(linear_model_europe, which = 1)
-# Normality of Residuals (Q-Q plot): should be approximately normally distributed
-plot(linear_model_europe, which = 2)
-
-# Asia
-# Residual Analysis: should be close to zero and evenly distributed
-plot(linear_model_asia, which = 1)
-# Normality of Residuals (Q-Q plot): should be approximately normally distributed
-plot(linear_model_asia, which = 2)
-
-# Africa
-# Residual Analysis: should be close to zero and evenly distributed
-plot(linear_model_africa, which = 1)
-# Normality of Residuals (Q-Q plot): should be approximately normally distributed
-plot(linear_model_africa, which = 2)
-
-# Americas
-# Residual Analysis: should be close to zero and evenly distributed
-plot(linear_model_america, which = 1)
-# Normality of Residuals (Q-Q plot): should be approximately normally distributed
-plot(linear_model_america, which = 2)
-
-# Oceania
-# Residual Analysis: should be close to zero and evenly distributed
-plot(linear_model_oceania, which = 1)
-# Normality of Residuals (Q-Q plot): should be approximately normally distributed
-plot(linear_model_oceania, which = 2)
-
+anim_save("animated_plot.gif", my_animation, renderer = gifski_renderer())
