@@ -12,15 +12,15 @@ data |>
 # Barchart  BMI and Adult Mortality
 #_____________________________________
 
-
-# Install ggplot2 and shiny if not installed
-# install.packages(c("ggplot2", "shiny", "countrycode", "dplyr"))
+# Install plotly if not installed
+# install.packages("plotly")
 
 # Load the required packages
 library(ggplot2)
 library(shiny)
 library(countrycode)
 library(dplyr)
+library(plotly)
 
 # Read the CSV file and add continent information
 data <- read.csv("Life_Expectancy_Data.csv", header = TRUE) %>%
@@ -35,10 +35,10 @@ ui <- fluidPage(
   sidebarLayout(
     sidebarPanel(
       selectInput("continent", "Select Continent", choices = unique(data$Continent)),
-      sliderInput("year", "Select Year", min = min(data$Year), max = max(data$Year), value = min(data$Year), step = 1)
+      selectInput("year", "Select Year", choices = unique(data$Year), selected = min(data$Year))
     ),
     mainPanel(
-      plotOutput("barchart")
+      plotlyOutput("barchart")
     )
   )
 )
@@ -50,17 +50,27 @@ server <- function(input, output) {
       filter(Continent == input$continent, Year == input$year)
   })
   
-  output$barchart <- renderPlot({
-    ggplot(filtered_data(), aes(x = Country)) +
-      geom_bar(aes(y = BMI), stat = "identity", position = "dodge", fill = "blue", alpha = 0.7) +
-      geom_bar(aes(y = Adult.Mortality * 10), stat = "identity", position = "dodge", fill = "red", alpha = 0.7) +
-      labs(title = paste("BMI and Adult Mortality by Country -", input$continent, "-", input$year), y = "Values") +
+  output$barchart <- renderPlotly({
+    p <- ggplot(filtered_data(), aes(x = reorder(Country, -BMI))) +
+      geom_bar(aes(y = BMI, fill = "BMI", text = BMI), stat = "identity", position = "dodge", alpha = 0.7) +
+      geom_bar(aes(y = Adult.Mortality, fill = "Adult Mortality", text = Adult.Mortality), stat = "identity", position = "dodge", alpha = 0.7) +
+      labs(title = paste("BMI and Adult Mortality by Country -", input$continent, "-", input$year),
+           y = "Values",
+           x = "Country",
+           fill = "Legend") +
       scale_y_continuous(
-        name = "BMI",
-        sec.axis = sec_axis(~./10, name = "Adult Mortality")
+        name = "BMI / Adult Mortality",
+        sec.axis = sec_axis(~., name = "BMI")
       ) +
-      theme_minimal()
+      scale_fill_manual(values = c("#e31a1c","#3182bd"), name = "Legend") +
+      theme_minimal() +
+      theme(legend.position = "top", legend.box.background = element_rect(color = "black", size = 0.5),
+            axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+    
+    p <- ggplotly(p, tooltip = "text")  # Add interactivity with plotly
+    p
   })
+  
 }
 
 # Run the Shiny app
