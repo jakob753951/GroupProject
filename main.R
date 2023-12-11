@@ -11,13 +11,22 @@ data |>
 # World plot Disease
 #__________________________________
 
+# Install shiny if not already installed
+if (!requireNamespace("shiny", quietly = TRUE)) {
+  install.packages("shiny")
+}
 
 library(tidyverse)
 library(maps)
 library(RColorBrewer)
-library(countrycode)
-library(gganimate)
 library(shiny)
+library(gganimate)
+
+# Set options for displaying numbers
+options(scipen = 999)
+
+# Make sure your data is loaded into 'data'
+# Example: data <- read.csv("YourFilePath/YourFile.csv")
 
 # Read the CSV file and add Continent information
 data <- read.csv("Life_Expectancy_Data.csv", header = TRUE) %>%
@@ -26,59 +35,77 @@ data <- read.csv("Life_Expectancy_Data.csv", header = TRUE) %>%
 # Exclude data from the year 2015
 data <- data %>% filter(Year != 2015)
 
-# Durchschnitt für jede Variable nach Land und Jahr
+# Identify variables causing warnings
+warnings <- last_dplyr_warnings()
+print(warnings)
+
+# Check the structure of your data to identify non-numeric or non-boolean variables
+str(data)
+
+# Fix the summarise_all() function to exclude non-numeric variables
+numeric_data <- data %>%
+  select(-c("Country", "Continent", "Status")) %>%
+  select_if(is.numeric)
+
 average_data <- data %>%
-  group_by(Country, Year) %>%
-  summarize_all(mean, na.rm = TRUE)
+  group_by(Country, Continent) %>%
+  summarize(across(everything(), ~mean(., na.rm = TRUE)))
 
-# Funktion zum Hinzufügen der Option "Durchschnitt" zum Jahr-Dropdown-Menü
-add_average_option <- function(years) {
-  c(unique(years), "Durchschnitt")
-}
+# Combine the data frames with matching data types for "Year"
+data_with_average <- average_data %>%
+  mutate(Year = "Average") %>%
+  bind_rows(data %>% select(-Status) %>% mutate(Year = as.character(Year)))
 
+# Check the structure of the combined data frame
+#str(data_with_average)
+data <- data_with_average
+
+# UI-Definition
 ui <- fluidPage(
-  # Dropdown menu for selecting variable
-  selectInput("variable", "Select Variable", choices = c("Measles", "Hepatitis.B", "Polio","HIV.AIDS","Diphtheria")),
-  # Dropdown menu for selecting year
-  selectInput("year", "Select Year", choices = add_average_option(unique(data$Year))),
-  # Plot output
-  plotOutput("world_map")
+  titlePanel("World Map"),
+  
+  sidebarLayout(
+    sidebarPanel(
+      # Dropdown menu for Year
+      selectInput("year", "Select Year", choices = unique(data$Year)),
+      # Dropdown menu for Variable
+      selectInput("variable", "Select Variable", choices = c("Measles", "Hepatitis.B", "Polio", "HIV.AIDS", "Diphtheria"))
+    ),
+    mainPanel(
+      # World Map Output
+      plotOutput("world_map")
+    )
+  )
 )
 
+# Server Definition
 server <- function(input, output) {
+  options(scipen = 999)
+  options(scales.GLOBAL = list(scientific = FALSE))
+  # Filter function for selected options
+  filtered_data <- reactive({
+    filter(data, Year == input$year)
+  })
+  
+  # Generate World Map
   output$world_map <- renderPlot({
-    # Überprüfen, ob "Durchschnitt" ausgewählt ist
-    if (input$year == "Durchschnitt") {
-      filtered_data <- average_data
-    } else {
-      filtered_data <- data %>% 
-        filter(Year == as.numeric(input$year))
-    }
-    
+    newdata <- filtered_data()
     country_data <- data.frame(
-      country = filtered_data$Country,
-      variable = filtered_data[, input$variable]
+      country = newdata$Country,
+      value = newdata[[input$variable]]
     )
     
     world_data <- map_data("world")
+    merged_data <- left_join(world_data, country_data, by = c("region" = "country"))
     
-    # Unterdrücken der Warnung für viele-zu-viele-Beziehung
-    merged_data <- suppressWarnings(left_join(world_data, country_data, by = c("region" = "country")))
+    num_classes <- 9
+    color_intervals <- seq(0, max(merged_data$value, na.rm = TRUE), length.out = num_classes)
+    color_palette <- brewer.pal(num_classes, "Blues")
     
-    # Anzahl der gewünschten Farbstufen
-    num_colors <- 5
-    
-    # Erstellen von gleichmäßig verteilten Breaks
-    breaks <- seq(0, max(filtered_data[, input$variable], na.rm = TRUE), length.out = num_colors + 1)
-    
-    # Adjust color palette accordingly (make sure to have num_colors + 1 colors)
-    color_palette <- brewer.pal(length(breaks) - 1, "Blues")
-    
-    # Plot the world map with adjusted breaks and color palette
-    p <- ggplot(merged_data) +
-      geom_polygon(aes(x = long, y = lat, group = group, fill = cut(variable, breaks = breaks, dig.lab = 5), text = paste("Country: ", region, "\n", input$variable, ": ", variable)), color = "gray40") +
-      scale_fill_manual(values = color_palette, na.value = "grey50") +
-      labs(title = paste("World Map for", input$variable, if (input$year == "Durchschnitt") " (Durchschnitt)" else "", if (input$year != "Durchschnitt") paste("in", input$year)), fill = input$variable) +
+    world_map <- ggplot(merged_data) +
+      geom_polygon(aes(x = long, y = lat, group = group, fill = cut(value, breaks = color_intervals)), color = "gray40") +
+      scale_fill_manual(values = color_palette) +
+      labs(title = paste("World Map for", input$variable, "in", input$year), fill = input$variable) +
       theme_minimal() +
       theme(legend.position = "bottom",
             axis.title = element_blank(),
@@ -86,9 +113,9 @@ server <- function(input, output) {
             panel.grid.major = element_blank(),
             panel.grid.minor = element_blank())
     
-    # Display the plot
-    print(p)
+    print(world_map)
   })
 }
 
-shinyApp(ui, server)
+# Run the App
+shinyApp(ui = ui, server = server)
