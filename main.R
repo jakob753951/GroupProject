@@ -119,6 +119,50 @@ combined_plot <- subplot(scatter_plot_europe, scatter_plot_asia, scatter_plot_af
 combined_plot
 
 
+
+
+
+
+###############################################################################
+# Combine Subplots in one plot
+data_models <- list(africa = data_model_africa, americas = data_model_americas, asia = data_model_asia, europe = data_model_europe, oceania = data_model_oceania)
+
+scatter_plot <- plot_ly(data_models$africa, x = ~data_models$africa$Under.Five.Deaths,  y = ~data_models$africa$Hepatitis.B.Average, text = data_models$africa$Country, mode = "markers", type = "scatter", name = "African countries") %>%
+  add_trace(x = ~data_models$americas$Under.Five.Deaths,  y = ~data_models$americas$Hepatitis.B.Average, text = data_models$americas$Country, mode = "markers", type = "scatter", name = "American countries") %>%
+  add_trace(x = ~data_models$asia$Under.Five.Deaths,  y = ~data_models$asia$Hepatitis.B.Average, text = data_models$asia$Country, mode = "markers", type = "scatter", name = "Asian countries") %>%
+  add_trace(x = ~data_models$europe$Under.Five.Deaths,  y = ~data_models$europe$Hepatitis.B.Average, text = data_models$europe$Country, mode = "markers", type = "scatter", name = "European countries") %>%
+  add_trace(x = ~data_models$oceania$Under.Five.Deaths,  y = ~data_models$oceania$Hepatitis.B.Average, text = data_models$oceania$Country, mode = "markers", type = "scatter", name = "Oceanian countries")%>%
+  layout(title = "Child death relation towards Hepathitis B immunization coverage", xaxis = list(title = "Death under age of 5"), yaxis = list(title = "Hepatitis B immunization coverage in percent"))
+scatter_plot
+
+  
+linear_model <- lm(data_models$Hepatitis.B.Average ~ data_models$Under.Five.Deaths.Average, data = data_models)
+predicted_values <- predict(linear_models)
+# Set values below 0 to 0 --> still some error here: truncates values but now there is a bend in the line which should be straight
+predicted_values[predicted_values < 0] <- 0
+rmse_prediction <- sqrt(mean(resid(linear_model)^2))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+###############################################################################
+
 ## Checking the grade of the linear regression
 # Europe
 # Residual Analysis: should be close to zero and evenly distributed
