@@ -74,11 +74,11 @@ data_model_asia   <- subset(data_asia)#, Country != "Russian Federation")
 
 # Africa
 data_model_africa   <- subset(data_africa) #, Country) # != "Russian Federation")
-#linear_model_africa <- lm(data_model_africa$Hepatitis.B.Average ~ data_model_africa$Under.Five.Deaths.Average, data = data_model_africa)
-#predicted_values_africa <- predict(linear_model_africa)
+linear_model_africa <- lm(data_model_africa$Data.Y.Average ~ data_model_africa$Data.X.Average, data = data_model_africa)
+predicted_values_africa <- predict(linear_model_africa)
 # Set values below 0 to 0 --> still some error here: truncates values but now there is a bend in the line which should be straight
 #predicted_values_africa[predicted_values_africa < 0] <- 0
-#rmse_africa <- sqrt(mean(resid(linear_model_africa)^2))
+rmse_africa <- sqrt(mean(resid(linear_model_africa)^2))
 
 # Americas
 data_model_americas   <- subset(data_americas)
@@ -101,13 +101,12 @@ data_model_oceania   <- subset(data_oceania)
 
 new_color <- c("#1f78b4", "#33a02c", "#ff7f00", "#e31a1c", "#6a3d9a")
 
-data_models <- list(africa = data_model_africa, americas = data_model_americas, asia = data_model_asia, europe = data_model_europe, oceania = data_model_oceania)
-
 scatter_plot <- plot_ly(data_models$africa, x = ~data_models$africa$Data.X.Average,  y = ~data_models$africa$Data.Y.Average, text = data_models$africa$Country, yaxis = list(range = c(0, 1)), mode = "markers", type = "scatter", name = "African countries", colors = new_color[1]) %>%
   add_trace(x = ~data_models$americas$Data.X.Average,  y = ~data_models$americas$Data.Y.Average, text = data_models$americas$Country, mode = "markers", type = "scatter", name = "American countries", colors = new_color[2]) %>%
   add_trace(x = ~data_models$asia$Data.X.Average,  y = ~data_models$asia$Data.Y.Average, text = data_models$asia$Country, mode = "markers", type = "scatter", name = "Asian countries", colors = new_color[3]) %>%
   add_trace(x = ~data_models$europe$Data.X.Average,  y = ~data_models$europe$Data.Y.Average, text = data_models$europe$Country, mode = "markers", type = "scatter", name = "European countries", colors = new_color[4]) %>%
   add_trace(x = ~data_models$oceania$Data.X.Average,  y = ~data_models$oceania$Data.Y.Average, text = data_models$oceania$Country, mode = "markers", type = "scatter", name = "Oceanian countries", colors = new_color[5])%>%
+  add_lines()
   layout(title = title_label, xaxis = list(title = x_label), yaxis = list(title = y_label))
 scatter_plot
 
