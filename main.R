@@ -78,8 +78,8 @@ linear_model_africa <- lm(data_model_africa$Data.Y.Average ~ data_model_africa$D
 predicted_values_africa <- predict(linear_model_africa)
 # Set values below 0 to 0 --> still some error here: truncates values but now there is a bend in the line which should be straight
 #predicted_values_africa[predicted_values_africa < 0] <- 0
-rmse_africa <- sqrt(mean(resid(linear_model_africa)^2))
-
+rmse_africa <- sqrt(mean(resid(linear_model_africa)^2)) %>%
+  round(digits = 4)
 # Americas
 data_model_americas   <- subset(data_americas)
 #linear_model_america <- lm(data_model_americas$Hepatitis.B.Average ~ data_model_americas$Under.Five.Deaths.Average, data = data_model_americas)
@@ -102,20 +102,15 @@ data_model_oceania   <- subset(data_oceania)
 new_color <- c("#1f78b4", "#33a02c", "#ff7f00", "#e31a1c", "#6a3d9a")
 
 scatter_plot <- plot_ly(data_models$africa, x = ~data_models$africa$Data.X.Average,  y = ~data_models$africa$Data.Y.Average, text = data_models$africa$Country, yaxis = list(range = c(0, 1)), mode = "markers", type = "scatter", name = "African countries", colors = new_color[1]) %>%
+  add_lines(x = ~data_model_africa$Data.X.Average, y = ~predicted_values_africa, line = list(color = new_color[1]), name = "Linear regression, Africa", hoverinfo = "text", text = rep(paste("RMSE: ", rmse_africa), length(predicted_values_africa))) %>%
   add_trace(x = ~data_models$americas$Data.X.Average,  y = ~data_models$americas$Data.Y.Average, text = data_models$americas$Country, mode = "markers", type = "scatter", name = "American countries", colors = new_color[2]) %>%
   add_trace(x = ~data_models$asia$Data.X.Average,  y = ~data_models$asia$Data.Y.Average, text = data_models$asia$Country, mode = "markers", type = "scatter", name = "Asian countries", colors = new_color[3]) %>%
   add_trace(x = ~data_models$europe$Data.X.Average,  y = ~data_models$europe$Data.Y.Average, text = data_models$europe$Country, mode = "markers", type = "scatter", name = "European countries", colors = new_color[4]) %>%
   add_trace(x = ~data_models$oceania$Data.X.Average,  y = ~data_models$oceania$Data.Y.Average, text = data_models$oceania$Country, mode = "markers", type = "scatter", name = "Oceanian countries", colors = new_color[5])%>%
-  add_lines()
-  layout(title = title_label, xaxis = list(title = x_label), yaxis = list(title = y_label))
+  add_text(x = data_model_africa$Data.X.Average[473], y = predicted_values_africa[473], text = paste("RMSE: ", rmse_africa), showlegend = FALSE, textposition = "top right") %>%
+  layout(title = title_label, xaxis = list(title = x_label), yaxis = list(title = y_label, range = c(0, 1)))
 scatter_plot
 
-
-#linear_model <- lm(data_models$Hepatitis.B.Average ~ data_models$Under.Five.Deaths.Average, data = data_models)
-#predicted_values <- predict(linear_models)
-# Set values below 0 to 0 --> still some error here: truncates values but now there is a bend in the line which should be straight
-#predicted_values[predicted_values < 0] <- 0
-#rmse_prediction <- sqrt(mean(resid(linear_model)^2))
 
 ###############################################################################
 # DO NOT PLOT THIS, THIS IS JUST FOR CHECKING THE QUALITY OF THE LINEAR REGRESSION
