@@ -20,7 +20,7 @@ averages_data_y <- data.frame(Country = character(), Average = numeric(), string
 
 title_label <- "HIV/AIDS cases against adult mortality in different continents"
 x_label <- "HIV/AIDS prevalence"
-y_label <- "Mortality probability between 15 and 60 years"
+y_label <- "Mortality probability between 15 and 60 years in percent"
 
 # Get unique countries in the data frame
 unique_countries <- unique(data$Country)
@@ -101,13 +101,12 @@ data_model_oceania   <- subset(data_oceania)
 
 new_color <- c("#1f78b4", "#33a02c", "#ff7f00", "#e31a1c", "#6a3d9a")
 
-scatter_plot <- plot_ly(data_model_africa, x = ~data_model_africa$Data.X.Average,  y = ~data_model_africa$Data.Y.Average, text = data_model_africa$Country, yaxis = list(range = c(0, 1)), mode = "markers", type = "scatter", name = "African countries", colors = new_color[1]) %>%
-  add_lines(x = ~data_model_africa$Data.X.Average, y = ~predicted_values_africa, line = list(color = new_color[1]), name = "Linear regression, Africa", hoverinfo = "text", text = rep(paste("RMSE: ", rmse_africa), length(predicted_values_africa))) %>%
-  add_trace(x = ~data_model_americas$Data.X.Average,  y = ~data_model_americas$Data.Y.Average, text = data_model_americas$Country, mode = "markers", type = "scatter", name = "American countries", colors = new_color[2]) %>%
-  add_trace(x = ~data_model_asia$Data.X.Average,  y = ~data_model_asia$Data.Y.Average, text = data_model_asia$Country, mode = "markers", type = "scatter", name = "Asian countries", colors = new_color[3]) %>%
-  add_trace(x = ~data_model_europe$Data.X.Average,  y = ~data_model_europe$Data.Y.Average, text = data_model_europe$Country, mode = "markers", type = "scatter", name = "European countries", colors = new_color[4]) %>%
-  add_trace(x = ~data_model_oceania$Data.X.Average,  y = ~data_model_oceania$Data.Y.Average, text = data_model_oceania$Country, mode = "markers", type = "scatter", name = "Oceanian countries", colors = new_color[5])%>%
-  add_text(x = data_model_africa$Data.X.Average[473], y = predicted_values_africa[473], text = paste("RMSE: ", rmse_africa), showlegend = FALSE, textposition = "top right") %>%
+scatter_plot <- plot_ly(data_model_africa, x = ~data_model_africa$Data.X.Average,  y = ~data_model_africa$Data.Y.Average, text = ~paste("Country: ", data_model_africa$Country), yaxis = list(range = c(0, 1)), mode = "markers", type = "scatter", name = "Africa", colors = new_color[1]) %>%
+  add_lines(x = ~data_model_africa$Data.X.Average, y = ~predicted_values_africa, line = list(color = new_color[1]),  name = ~paste("Linear regression for<br>Africa: ", rmse_africa)) %>%   # name = "Linear regression, Africa", hoverinfo = "text",  text = ~paste("RMSE: ", data_model_africa$Country, " (Africa)")      text = rep(paste("RMSE: ", rmse_africa), length(predicted_values_africa))) %>%
+  add_trace(x = ~data_model_americas$Data.X.Average,  y = ~data_model_americas$Data.Y.Average, text = ~paste("Country: ", data_model_americas$Country), mode = "markers", type = "scatter", name = "Americas", colors = new_color[2]) %>%
+  add_trace(x = ~data_model_asia$Data.X.Average,  y = ~data_model_asia$Data.Y.Average, text = ~paste("Country: ", data_model_asia$Country), mode = "markers", type = "scatter", name = "Asia", colors = new_color[3]) %>%
+  add_trace(x = ~data_model_europe$Data.X.Average,  y = ~data_model_europe$Data.Y.Average, text = ~paste("Country: ", data_model_europe$Country), mode = "markers", type = "scatter", name = "Europe", colors = new_color[4]) %>%
+  add_trace(x = ~data_model_oceania$Data.X.Average,  y = ~data_model_oceania$Data.Y.Average, text = ~paste("Country: ", data_model_oceania$Country), mode = "markers", type = "scatter", name = "Oceania", colors = new_color[5])%>%
   layout(title = title_label, xaxis = list(title = x_label), yaxis = list(title = y_label, range = c(0, 1)))
 scatter_plot
 
