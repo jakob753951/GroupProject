@@ -1,12 +1,4 @@
 renv::install()
-library(dplyr)
-data <- read.csv("Life_Expectancy_Data.csv", header = TRUE)
-
-data |>
-  group_by(Country) |>
-  slice_min(Year) |>
-  select(Life.expectancy)
-
 #__________________________________________
 # Alcohol vs. Adult Mortality
 #__________________________________________
@@ -35,10 +27,11 @@ p_animate_plotly <- plot_ly(
   size = as.numeric(data$Life.expectancy), #size of the bubbles according to life expectancy
   color = ~Continent,
   colors = new_color,
-  text = ~paste("Country: ", Country, ", Life.expectancy: ", Life.expectancy),
+  text = ~paste("Country: ", Country, ", Life expectancy: ", Life.expectancy),
   frame = ~Year,
   type = "scatter",
-  mode = "markers"
+  mode = "markers",
+  ids = ~Country
 ) %>%
   layout(
     xaxis = list(type = "log", title = "Adult mortality per capita"),
