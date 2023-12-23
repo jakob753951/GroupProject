@@ -55,8 +55,8 @@ p_animate_plotly <- plot_ly(
   mode = "markers"
 ) %>%
   layout(
-    xaxis = list(type = "log", title = "GDP per Capita"),
-    yaxis = list(title = "Life Expectancy"),
+    xaxis = list(type = "log", title = "GDP per capita in USD"),
+    yaxis = list(title = "Life expectancy in years"),
     showlegend = TRUE,
     legend = list(
       x = 1,
