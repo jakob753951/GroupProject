@@ -1,14 +1,6 @@
 renv::install()
-library(dplyr)
-data <- read.csv("Life_Expectancy_Data.csv", header = TRUE)
-
-data |>
-  group_by(Country) |>
-  slice_min(Year) |>
-  select(Life.expectancy)
-
 #__________________________________________
-# Hepatithis vs. Alcohol
+# Hepatitis vs. Alcohol
 #__________________________________________
 
 library(ggplot2)
@@ -32,17 +24,18 @@ new_color <- c("#1f78b4", "#33a02c", "#ff7f00", "#e31a1c", "#6a3d9a")
 p_animate_plotly <- plot_ly(
   data,
   x = ~Alcohol, y = ~Hepatitis.B,
-  size = ~Life.expectancy, color = ~Continent,
+  size = ~Life.expectancy,
+  color = ~Continent,
   colors = new_color,
-  text = ~paste("Country: ", Country, ", Life.expectancy: ", Life.expectancy),
+  text = ~paste("Country: ", Country, ", Life expectancy: ", Life.expectancy),
   frame = ~Year,
-  marker = list(sizemode = "diameter", size = (~Life.expectancy*0.2), line = list(width = 0.1)),  # Adjust the line width
   type = "scatter",
-  mode = "markers"
+  mode = "markers",
+  ids = ~Country #important for bubbles not to change which country they depict during animation
 ) %>%
   layout(
-    xaxis = list(type = "log", title = "Alcohol"),
-    yaxis = list(title = "Hepatitis"),
+    xaxis = list(type = "log", title = "Alcohol consumption per capita (in liters of pure alcohol)"),
+    yaxis = list(title = "Hepatitis B immunization coverage (in percent)"),
     showlegend = TRUE,
     legend = list(
       x = 1,
@@ -65,5 +58,4 @@ p_animate_plotly <- plot_ly(
 htmlwidgets::saveWidget(p_animate_plotly, file = "interactive_plot-Alcohol.html")
 # or show it in the viewer
 p_animate_plotly
-
 
