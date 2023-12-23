@@ -32,17 +32,17 @@ new_color <- c("#1f78b4", "#33a02c", "#ff7f00", "#e31a1c", "#6a3d9a")
 p_animate_plotly <- plot_ly(
   data,
   x = ~Adult.Mortality, y = ~Alcohol,
-  size = ~Life.expectancy, color = ~Continent,
+  size = as.numeric(data$Life.expectancy), #size of the bubbles according to life expectancy
+  color = ~Continent,
   colors = new_color,
   text = ~paste("Country: ", Country, ", Life.expectancy: ", Life.expectancy),
   frame = ~Year,
-  marker = list(sizemode = "diameter", size = (~Life.expectancy*0.2), line = list(width = 0.1)),  # Adjust the line width
   type = "scatter",
   mode = "markers"
 ) %>%
   layout(
-    xaxis = list(type = "log", title = "Adult Mortality per Capita"),
-    yaxis = list(title = "Alcohol"),
+    xaxis = list(type = "log", title = "Adult mortality per capita"),
+    yaxis = list(title = "Alcohol consumption per capita (in liters of pure alcohol)"),
     showlegend = TRUE,
     legend = list(
       x = 1,
