@@ -26,20 +26,20 @@ data <- data %>% filter(Year != 2015)
 
 # Create ggplot
 boxplot_anim <- ggplot(data, aes(x = factor(Status), y = Alcohol, fill = factor(Status), frame = Year)) +
-  geom_boxplot(outlier.colour = "red") +
-  geom_jitter(color = "black", width = 0.2, shape = 1, height = 0, alpha = 0.7) + #factor(Status)
-  transition_states(Year, transition_length = 10, state_length = 30) +
+  geom_boxplot(outlier.colour = "red") + #outliers in red for better visibility
+  geom_jitter(color = "black", width = 0.2, shape = 1, height = 0, alpha = 0.7) + 
+  transition_states(Year, transition_length = 1, state_length = 1) + #each 1 s
   enter_fade() +
   exit_shrink() +
   ease_aes('sine-in-out') +
   labs(
-    title = "Alcohol consumption in developing and developed countries",
-    x = "Country Status",    # Specify your custom x-axis label here
-    y = "Alcohol consumption per capita (liters of pure alcohol)"     # Specify your custom y-axis label here
+    title = "Alcohol consumption in developing and developed countries in the year {closest_state}",
+    x = "Country Status", #Developed or developing country
+    y = "Alcohol consumption per capita (liters of pure alcohol)"
   ) +
   theme(legend.position = "none") # no legend    
 
 
 # Create animation
-my_animation <- animate(boxplot_anim, nframes = 15, fps = 1)
+my_animation <- animate(boxplot_anim, nframes = 900, fps = 30)
 print(my_animation)
