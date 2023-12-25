@@ -1,11 +1,4 @@
 renv::install()
-library(dplyr)
-data <- read.csv("Life_Expectancy_Data.csv", header = TRUE)
-
-data |>
-  group_by(Country) |>
-  slice_min(Year) |>
-  select(Life.expectancy)
 
 #__________________________________
 # World plot Disease
@@ -15,7 +8,8 @@ data |>
 if (!requireNamespace("shiny", quietly = TRUE)) {
   install.packages("shiny")
 }
-
+library(dplyr)
+library(countrycode)
 library(tidyverse)
 library(maps)
 library(RColorBrewer)
@@ -25,9 +19,6 @@ library(gganimate)
 # Set options for displaying numbers
 options(scipen = 999)
 
-# Make sure your data is loaded into 'data'
-# Example: data <- read.csv("YourFilePath/YourFile.csv")
-
 # Read the CSV file and add Continent information
 data <- read.csv("Life_Expectancy_Data.csv", header = TRUE) %>%
   mutate(Continent = countrycode(Country, "country.name", "continent"))
@@ -36,11 +27,11 @@ data <- read.csv("Life_Expectancy_Data.csv", header = TRUE) %>%
 data <- data %>% filter(Year != 2015)
 
 # Identify variables causing warnings
-warnings <- last_dplyr_warnings()
-print(warnings)
+# warnings <- last_dplyr_warnings()
+# print(warnings)
 
 # Check the structure of your data to identify non-numeric or non-boolean variables
-str(data)
+# str(data)
 
 # Fix the summarise_all() function to exclude non-numeric variables
 numeric_data <- data %>%
@@ -102,18 +93,75 @@ server <- function(input, output) {
     color_intervals <- seq(0, max(merged_data$value, na.rm = TRUE), length.out = num_classes)
     color_palette <- brewer.pal(num_classes, "Blues")
     
+    if(input$variable == "Measles") {
     world_map <- ggplot(merged_data) +
       geom_polygon(aes(x = long, y = lat, group = group, fill = cut(value, breaks = color_intervals)), color = "gray40") +
       scale_fill_manual(values = color_palette) +
-      labs(title = paste("World Map for", input$variable, "in", input$year), fill = input$variable) +
       theme_minimal() +
       theme(legend.position = "bottom",
             axis.title = element_blank(),
             axis.text = element_blank(),
             panel.grid.major = element_blank(),
-            panel.grid.minor = element_blank())
-    
+            panel.grid.minor = element_blank()) +
+    labs(title = paste("World Map for", input$variable, "immunization coverage (percent) in", input$year), fill = input$variable)
     print(world_map)
+    }
+    
+    if(input$variable == "Hepatitis.B") {
+      world_map <- ggplot(merged_data) +
+        geom_polygon(aes(x = long, y = lat, group = group, fill = cut(value, breaks = color_intervals)), color = "gray40") +
+        scale_fill_manual(values = color_palette) +
+        theme_minimal() +
+        theme(legend.position = "bottom",
+              axis.title = element_blank(),
+              axis.text = element_blank(),
+              panel.grid.major = element_blank(),
+              panel.grid.minor = element_blank()) +
+        labs(title = paste("World Map for Hepatitis B immunization coverage (percent) in", input$year), fill = input$variable)
+      print(world_map)
+    }
+    
+    if(input$variable == "Polio") {
+      world_map <- ggplot(merged_data) +
+        geom_polygon(aes(x = long, y = lat, group = group, fill = cut(value, breaks = color_intervals)), color = "gray40") +
+        scale_fill_manual(values = color_palette) +
+        theme_minimal() +
+        theme(legend.position = "bottom",
+              axis.title = element_blank(),
+              axis.text = element_blank(),
+              panel.grid.major = element_blank(),
+              panel.grid.minor = element_blank()) +
+        labs(title = paste("World Map for", input$variable, "immunization coverage (percent) in", input$year), fill = input$variable)
+      print(world_map)
+    }
+    
+    if(input$variable == "HIV.AIDS") {
+      world_map <- ggplot(merged_data) +
+        geom_polygon(aes(x = long, y = lat, group = group, fill = cut(value, breaks = color_intervals)), color = "gray40") +
+        scale_fill_manual(values = color_palette) +
+        theme_minimal() +
+        theme(legend.position = "bottom",
+              axis.title = element_blank(),
+              axis.text = element_blank(),
+              panel.grid.major = element_blank(),
+              panel.grid.minor = element_blank()) +
+        labs(title = paste("World Map for HIV/AIDS in", input$year), fill = input$variable)
+      print(world_map)
+    }
+    
+    if(input$variable == "Diphtheria") {
+      world_map <- ggplot(merged_data) +
+        geom_polygon(aes(x = long, y = lat, group = group, fill = cut(value, breaks = color_intervals)), color = "gray40") +
+        scale_fill_manual(values = color_palette) +
+        theme_minimal() +
+        theme(legend.position = "bottom",
+              axis.title = element_blank(),
+              axis.text = element_blank(),
+              panel.grid.major = element_blank(),
+              panel.grid.minor = element_blank()) +
+        labs(title = paste("World Map for", input$variable, "immunization coverage (percent) in", input$year), fill = input$variable)
+      print(world_map)
+    }
   })
 }
 
