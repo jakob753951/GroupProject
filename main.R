@@ -145,7 +145,7 @@ server <- function(input, output) {
               axis.text = element_blank(),
               panel.grid.major = element_blank(),
               panel.grid.minor = element_blank()) +
-        labs(title = paste("World Map for HIV/AIDS in", input$year), fill = input$variable)
+        labs(title = paste("World Map for HIV/AIDS prevalence in", input$year), fill = input$variable)
       print(world_map)
     }
     
