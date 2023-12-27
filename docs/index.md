@@ -16,19 +16,24 @@ We see that developing nations have a significantly lower life expectancy than d
 We think this is caused by a wide range of factors including quality of healthcare, working conditions, water access, and prevalence of deadly diseases.
 <br>
 
-## Other plots
+## Interactive bubbleplot for Alcohol consumption v Adult deaths
+Does drinking alcohol correlate with mortality?
+[Bubbleplot - Alcohol consumption v Adult mortality per capita](resources/plot_bubble_alcohol_deaths.html)
 
-[Bubbleplot - Alcohol comsumption v Adult death probability](resources/plot_bubble_alcohol_deaths.html)
 <br>
 
-[Bubbleplot - Alcohol comsumption v Hepatitis B immunization](resources/plot_bubble_alcohol_hepatitis.html)
+## Interactive bubbleplot for Alcohol consumption v Hepatitis B immunization
+[Bubbleplot - Alcohol consumption v Hepatitis B immunization](resources/plot_bubble_alcohol_hepatitis.html)
 <br>
 
+## Interactive bubbleplot for Life expectancy v GDP per capita
 [Bubbleplot - Life expectancy v GDP per capita](resources/plot_bubble_life_expectancy_gdp.html)
 <br>
 
 
+## Interactive scatterplot for Infant mortality v Hepatitis B immunization
 [Scatterplot - Infant mortality v Hepatitis B immunization](resources/plot_scatter_infant_mortality_hepatitis.html)
 <br>
 
-[Scatterplot - AIDS cases v Adult death probability](resources/plot_scatter_aids_deaths.html)
+## Interactive scatterplot for AIDS cases v Adult mortality per capita
+[Scatterplot - AIDS cases v Adult mortality per capita](resources/plot_scatter_aids_deaths.html)
