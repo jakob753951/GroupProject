@@ -105,7 +105,10 @@ scatter_plot <- plot_ly(data_models$africa, x = ~data_models$africa$Under.Five.D
   add_trace(x = ~data_models$europe$Under.Five.Deaths,  y = ~data_models$europe$Hepatitis.B.Average, text = data_models$europe$Country, mode = "markers", type = "scatter", name = "European countries", colors = new_color[4]) |>
   add_trace(x = ~data_models$oceania$Under.Five.Deaths,  y = ~data_models$oceania$Hepatitis.B.Average, text = data_models$oceania$Country, mode = "markers", type = "scatter", name = "Oceanian countries", colors = new_color[5])|>
   layout(title = "Child death relation towards Hepathitis B immunization coverage", xaxis = list(title = "Death under age of 5"), yaxis = list(title = "Hepatitis B immunization coverage in percent"))
+htmlwidgets::saveWidget(scatter_plot, file = "site/plot_scatter_infant_mortality_hepatitis.html")
 scatter_plot
+
+
 
 
 #linear_model <- lm(data_models$Hepatitis.B.Average ~ data_models$Under.Five.Deaths.Average, data = data_models)

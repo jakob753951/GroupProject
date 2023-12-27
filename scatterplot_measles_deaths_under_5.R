@@ -65,5 +65,6 @@ scatter_plot <- plot_ly(data_africa, x = ~data_africa$Data.X.Average,  y = ~data
   add_trace(x = ~data_europe$Data.X.Average,  y = ~data_europe$Data.Y.Average, text = ~paste("Country: ", data_europe$Country), mode = "markers", type = "scatter", name = "Europe", colors = new_color[4]) |>
   add_trace(x = ~data_oceania$Data.X.Average,  y = ~data_oceania$Data.Y.Average, text = ~paste("Country: ", data_oceania$Country), mode = "markers", type = "scatter", name = "Oceania", colors = new_color[5])|>
   layout(title = title_label, xaxis = list(title = x_label), yaxis = list(title = y_label, range = c(0, 1)))
+htmlwidgets::saveWidget(scatter_plot, file = "site/plot_scatter_aids_deaths.html")
 
 scatter_plot 

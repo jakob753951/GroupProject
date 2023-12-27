@@ -76,6 +76,6 @@ p_animate_plotly <- plot_ly(
 
 # Save or Display
 # Save Plotly object to an HTML file
-htmlwidgets::saveWidget(p_animate_plotly, file = "interactive_plot-Lifeexp.html")
+htmlwidgets::saveWidget(p_animate_plotly, file = "site/plot_bubble_life_expectancy_gdp.html")
 # Or display in the viewer
 p_animate_plotly

@@ -55,6 +55,6 @@ p_animate_plotly <- plot_ly(
 
 # Save or display
 # save the plotly object to an HTML file
-htmlwidgets::saveWidget(p_animate_plotly, file = "interactive_plot-Alcohol.html")
+htmlwidgets::saveWidget(p_animate_plotly, file = "site/plot_bubble_alcohol_hepatitis.html")
 # or show it in the viewer
 p_animate_plotly
