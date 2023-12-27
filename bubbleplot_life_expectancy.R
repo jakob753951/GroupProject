@@ -52,7 +52,8 @@ p_animate_plotly <- plot_ly(
   frame = ~Year,
   marker = list(sizemode = "diameter", line = list(width = 1)),
   type = "scatter",
-  mode = "markers"
+  mode = "markers",
+  ids = ~Country
 ) |>
   layout(
     xaxis = list(type = "log", title = "GDP per capita in USD"),
