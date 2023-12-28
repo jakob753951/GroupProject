@@ -52,7 +52,8 @@ p_animate_plotly <- plot_ly(
   frame = ~Year,
   marker = list(sizemode = "diameter", line = list(width = 1)),
   type = "scatter",
-  mode = "markers"
+  mode = "markers",
+  ids = ~Country
 ) |>
   layout(
     xaxis = list(type = "log", title = "GDP per capita in USD"),
@@ -76,6 +77,6 @@ p_animate_plotly <- plot_ly(
 
 # Save or Display
 # Save Plotly object to an HTML file
-htmlwidgets::saveWidget(p_animate_plotly, file = "interactive_plot-Lifeexp.html")
+htmlwidgets::saveWidget(p_animate_plotly, file = "site/plot_bubble_life_expectancy_gdp.html")
 # Or display in the viewer
 p_animate_plotly

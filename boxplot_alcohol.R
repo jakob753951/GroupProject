@@ -43,4 +43,4 @@ boxplot_anim <- ggplot(data, aes(x = factor(Status), y = Alcohol, fill = factor(
 # Create animation
 my_animation <- animate(boxplot_anim, nframes = 900, fps = 30)
 print(my_animation)
-anim_save("animated_boxplot.gif", my_animation)
+anim_save("site/img/animated_boxplot_alcohol.gif", my_animation)

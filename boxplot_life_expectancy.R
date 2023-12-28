@@ -37,10 +37,10 @@ boxplot_anim <- ggplot(data, aes(x = factor(Status), y = Life.expectancy, fill =
     x = "Country Status", #Developed or developing country
     y = "Life expectancy in years"
   ) +
-  theme(legend.position = "none") # no legend    
+  theme(legend.position = "none") # no legend
 
 
 # Create animation
 my_animation <- animate(boxplot_anim, nframes = 900, fps = 30)
 print(my_animation)
-anim_save("animated_boxplot.gif", my_animation)
+anim_save("site/img/animated_boxplot_life_expectation.gif", my_animation)
