@@ -1,6 +1,6 @@
 # Group 8 dashboard
 
-[View the full report here]()
+[View the full report here](resources/group_8_report.pdf)
 
 The code for all of the graphs and for this dashboard is on [This GitHub repo.](https://github.com/jakob753951/data-viz-group-8)
 
