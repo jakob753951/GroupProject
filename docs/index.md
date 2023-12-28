@@ -1,5 +1,7 @@
 # Group 8 dashboard
 
+[View the full report here]()
+
 ## Alcohol consumption v Development status
 We wanted to see if there was a difference in alcohol consumption between developed and developing nations.
 We plotted this data as a boxplot animated over time as shown:
