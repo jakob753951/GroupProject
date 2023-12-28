@@ -2,11 +2,6 @@ renv::install()
 
 data <- read.csv("Life_Expectancy_Data.csv", header = TRUE)
 
-data |>
-  group_by(Country) |>
-  slice_min(Year) |>
-  select(Life.expectancy)
-
 #_____________________________________
 # Interactive barchart  BMI and Adult Mortality
 #_____________________________________
