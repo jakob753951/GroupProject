@@ -1,6 +1,6 @@
 # Group 8 dashboard
 
-## Animated boxplot for alcohol consumption
+## Alcohol consumption v Development status
 We wanted to see if there was a difference in alcohol consumption between developed and developing nations.
 We plotted this data as a boxplot animated over time as shown:
 ![Animated boxplot for alcohol consumption](resources/animated_boxplot_alcohol.gif)
@@ -9,7 +9,7 @@ We can see that people in developed nations drink considerably more than people 
 We speculate that this is due to people in developing nations having less access to alcohol.
 <br>
 
-## Animated boxplot for life expectancy
+## Life expectancy v Development status
 We also checked how life expectancies compare between developed and developing countries.
 As before, we use an animated boxplot to show this.
 
@@ -19,26 +19,48 @@ We see that developing nations have a significantly lower life expectancy than d
 We think this is caused by a wide range of factors including quality of healthcare, working conditions, water access, and prevalence of deadly diseases.
 <br>
 
-## Interactive bubbleplot for Alcohol consumption v Adult deaths
+## Alcohol consumption v Adult mortality
 Does drinking alcohol correlate with mortality?
+<embed type="text/html" src="resources/plot_bubble_alcohol_deaths.html" style="width: 100%;height:50vh;"/>
 
-[Bubbleplot - Alcohol consumption v Adult mortality per capita](resources/plot_bubble_alcohol_deaths.html)
-
+[View in Fullscreen](resources/plot_bubble_alcohol_deaths.html)
 <br>
 
-## Interactive bubbleplot for Alcohol consumption v Hepatitis B immunization
-[Bubbleplot - Alcohol consumption v Hepatitis B immunization](resources/plot_bubble_alcohol_hepatitis.html)
+## Alcohol consumption v Hepatitis B immunization
+<embed type="text/html" src="resources/plot_bubble_alcohol_hepatitis.html" style="width: 100%;height:50vh;"/>
 
+[View in Fullscreen](resources/plot_bubble_alcohol_hepatitis.html)
 <br>
 
-## Interactive bubbleplot for Life expectancy v GDP per capita
-[Bubbleplot - Life expectancy v GDP per capita](resources/plot_bubble_life_expectancy_gdp.html)
+## Life expectancy v GDP per capita
+<embed type="text/html" src="resources/plot_bubble_life_expectancy_gdp.html" style="width: 100%;height:50vh;"/>
+
+[View in Fullscreen](resources/plot_bubble_life_expectancy_gdp.html)
 <br>
 
 
-## Interactive scatterplot for Infant mortality v Hepatitis B immunization
-[Scatterplot - Infant mortality v Hepatitis B immunization](resources/plot_scatter_infant_mortality_hepatitis.html)
+## Infant mortality v Hepatitis B immunization
+<embed type="text/html" src="resources/plot_scatter_infant_mortality_hepatitis.html" style="width: 100%;height:50vh;"/>
+
+[View in Fullscreen](resources/plot_scatter_infant_mortality_hepatitis.html)
 <br>
 
-## Interactive scatterplot for AIDS cases v Adult mortality per capita
-[Scatterplot - AIDS cases v Adult mortality per capita](resources/plot_scatter_aids_deaths.html)
+## AIDS cases v Adult mortality
+<embed type="text/html" src="resources/plot_scatter_aids_deaths.html" style="width: 100%;height:50vh;"/>
+
+[View in Fullscreen](resources/plot_scatter_aids_deaths.html)
+<br>
+
+## BMI v Adult mortality
+<iframe src="https://jakoblm.shinyapps.io/barchart/" style="width: 100%;height:50vh;"/>
+It looks like your browser doesn't support iframes.
+</iframe>
+
+[View in Fullscreen](https://jakoblm.shinyapps.io/barchart/)
+
+## Disease over time
+<iframe src="https://jakoblm.shinyapps.io/worldplot/" style="width: 100%;height:50vh;"/>
+It looks like your browser doesn't support iframes.
+</iframe>
+
+[View in Fullscreen](https://jakoblm.shinyapps.io/worldplot/)
