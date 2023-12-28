@@ -2,6 +2,8 @@
 
 [View the full report here]()
 
+The code for all of the graphs and for this dashboard is on [This GitHub repo.](https://github.com/jakob753951/data-viz-group-8)
+
 ## Alcohol consumption v Development status
 We wanted to see if there was a difference in alcohol consumption between developed and developing nations.
 We plotted this data as a boxplot animated over time as shown:
